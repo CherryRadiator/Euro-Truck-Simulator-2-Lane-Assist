@@ -71,9 +71,13 @@ class RouteSection:
             return self._start_node
         if isinstance(self.items[0].item, c.Prefab):
             # Find the index of the node that matches the first curve
-            nav_route = self.items[0].item.prefab_description.nav_routes[
-                self.lane_index
-            ]
+            nav_routes = self.items[0].item.prefab_description.nav_routes
+            if not nav_routes:
+                return data.map.get_node_by_uid(self.items[0].item.node_uids[0])
+            lane_idx = min(self.lane_index, len(nav_routes) - 1)
+            if lane_idx != self.lane_index:
+                return data.map.get_node_by_uid(self.items[0].item.node_uids[0])
+            nav_route = nav_routes[lane_idx]
             first_curve = nav_route.curves[0]
             index = self.items[0].item.prefab_description.nav_curves.index(first_curve)
             node_index = 0
@@ -96,9 +100,13 @@ class RouteSection:
             return self._end_node
         if isinstance(self.items[0].item, c.Prefab):
             # Find the index of the node that matches the last curve
-            nav_route = self.items[0].item.prefab_description.nav_routes[
-                self.lane_index
-            ]
+            nav_routes = self.items[0].item.prefab_description.nav_routes
+            if not nav_routes:
+                return data.map.get_node_by_uid(self.items[0].item.node_uids[-1])
+            lane_idx = min(self.lane_index, len(nav_routes) - 1)
+            if lane_idx != self.lane_index:
+                return data.map.get_node_by_uid(self.items[0].item.node_uids[-1])
+            nav_route = nav_routes[lane_idx]
             last_curve = nav_route.curves[-1]
             index = self.items[0].item.prefab_description.nav_curves.index(last_curve)
             node_index = len(self.items[0].item.prefab_description.nodes) - 1
